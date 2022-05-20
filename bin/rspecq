@@ -61,6 +61,10 @@ OptionParser.new do |o|
     opts[:redis_url] = v
   end
 
+  o.on("--redis-no-verify", "Don't verify ssl certificate") do |v|
+    opts[:redis_no_verify] = v
+  end
+
   o.on("--update-timings", "Update the global job timings key with the "     \
        "timings of this build. Note: This key is used as the basis for job " \
        "scheduling.") do |v|
@@ -152,6 +156,10 @@ if opts[:redis_url]
   redis_opts[:url] = opts[:redis_url]
 else
   redis_opts[:host] = opts[:redis_host]
+end
+
+if opts[:redis_no_verify]
+  redis_opts[:ssl_params] = { verify_mode: OpenSSL::SSL::VERIFY_NONE }
 end
 
 Sentry.init if ENV["SENTRY_DSN"]
